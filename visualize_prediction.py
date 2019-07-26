@@ -166,11 +166,20 @@ def load_data(
         dataloader: dataloader with test examples to show
         model: fine tuned torchvision densenet-121
     """
-
+    """
     checkpoint = torch.load(PATH_TO_MODEL, map_location=lambda storage, loc: storage)
     model = checkpoint['model']
     del checkpoint
     model.cpu()
+    """
+	
+    checkpoint = torch.load(PATH_TO_MODEL, map_location=lambda storage, loc: storage)
+    model = checkpoint['model']
+    del checkpoint
+    model.cpu()
+    for i, (name, module) in enumerate(model._modules.items()):
+        module = recursion_change_bn(model)
+    model.eval()
 
     # build dataloader on test
     mean = [0.485, 0.456, 0.406]
@@ -299,3 +308,11 @@ def show_next(dataloader, model, LABEL):
     preds.sort_values(by='Predicted Probability',inplace=True,ascending=False)
     
     return preds
+
+def recursion_change_bn(module):
+    if isinstance(module, torch.nn.BatchNorm2d):
+        module.track_running_stats = 1
+    else:
+        for i, (name, module1) in enumerate(module._modules.items()):
+            module1 = recursion_change_bn(module1)
+    return module
