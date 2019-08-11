@@ -269,6 +269,8 @@ def show_next(dataloader, model, LABEL):
     
     # create predictions for label of interest and all labels
     pred = model(torch.autograd.Variable(original.cpu())).data.numpy()[0]
+    print (pred)
+    print (list(pred))
     predx = ['%.3f' % elem for elem in list(pred)]
     
     fig, (showcxr,heatmap) =plt.subplots(ncols=2,figsize=(14,5))
