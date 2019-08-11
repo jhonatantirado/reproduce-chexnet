@@ -308,6 +308,9 @@ def show_next(dataloader, model, LABEL):
     preds.columns=["Finding","Predicted Probability","Ground Truth"]
     preds.set_index("Finding",inplace=True)
     preds.sort_values(by='Predicted Probability',inplace=True,ascending=False)
+
+    preds_t = preds.T
+    print (preds_t)
     
     return preds
 
